@@ -1,0 +1,651 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\begin_modules
+knitr
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+LGM VIP Data Science Internship
+\begin_inset Newline newline
+\end_inset
+
+Beginner Task-1: Iris Flowers Classification ML Project
+\end_layout
+
+\begin_layout Author
+Name: Debartha Paul
+\end_layout
+
+\begin_layout Section*
+Description:
+\end_layout
+
+\begin_layout Standard
+The iris flowers dataset contains numeric attributes.
+ We have the attributes as:
+\end_layout
+
+\begin_layout Enumerate
+sepal length in cm 
+\end_layout
+
+\begin_layout Enumerate
+sepal width in cm 
+\end_layout
+
+\begin_layout Enumerate
+petal length in cm 
+\end_layout
+
+\begin_layout Enumerate
+petal width in cm 
+\end_layout
+
+\begin_layout Enumerate
+class: 
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+-- Iris Setosa 
+\end_layout
+
+\begin_layout Enumerate
+-- Iris Versicolour 
+\end_layout
+
+\begin_layout Enumerate
+-- Iris Virginica
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+We have to classify them into different categories using ML.
+\end_layout
+
+\begin_layout Section*
+Importing libraries and visualising the data
+\end_layout
+
+\begin_layout Standard
+We first load the libraries required for our work and then we read the dataset
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(class)#for the KNN function
+\end_layout
+
+\begin_layout Plain Layout
+
+set.seed(200)#setting the seed
+\end_layout
+
+\begin_layout Plain Layout
+
+df<-read.table('D:
+\backslash
+
+\backslash
+Important Documents
+\backslash
+
+\backslash
+Internship
+\backslash
+
+\backslash
+LGM-VIP Aug21
+\backslash
+
+\backslash
+Task-1
+\backslash
+
+\backslash
+iris.data',
+\end_layout
+
+\begin_layout Plain Layout
+
+				sep=',',header=F)#reading the file
+\end_layout
+
+\begin_layout Plain Layout
+
+head(df)#a sneak peek into the dataset
+\end_layout
+
+\begin_layout Plain Layout
+
+names(df)<-c('sepal.len','sepal.wd','petal.len',
+\end_layout
+
+\begin_layout Plain Layout
+
+			'petal.wd','class')#setting the names of the columns
+\end_layout
+
+\begin_layout Plain Layout
+
+dim(df)#the dimensions of the dataset
+\end_layout
+
+\begin_layout Plain Layout
+
+summary(df)#a brief summary of the dataset
+\end_layout
+
+\begin_layout Plain Layout
+
+classno<-ifelse(df$class=='Iris-setosa',1,
+\end_layout
+
+\begin_layout Plain Layout
+
+				ifelse(df$class=='Iris-virginica',2,3))#factoring on the basis of class
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+pairs(df[,-5],col=c('#943737','#599437','#375f94')[classno],
+\end_layout
+
+\begin_layout Plain Layout
+
+		main='Pairs plot of Iris',pch=16,oma=c(3,5,5,12))#plots of the data by
+ various attributes
+\end_layout
+
+\begin_layout Plain Layout
+
+par(xpd=T)
+\end_layout
+
+\begin_layout Plain Layout
+
+legend("bottomright",fill=c('#943737','#599437','#375f94'),
+\end_layout
+
+\begin_layout Plain Layout
+
+		legend=c('Iris-setosa','Iris-virginica','Iris-versicolor'),
+\end_layout
+
+\begin_layout Plain Layout
+
+		cex=0.5,title='Class')
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Splitting the dataset into training and test set
+\end_layout
+
+\begin_layout Standard
+We next split our dataset into training and testing sets.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+t_sample<-sample(nrow(df),0.8*nrow(df))	#contains the row numbers of the
+ training set
+\end_layout
+
+\begin_layout Plain Layout
+
+train<-df[t_sample,];test<-df[-t_sample,]
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We will use the K nearest neighbours to classify the dataset.
+\end_layout
+
+\begin_layout Section*
+Value of k
+\end_layout
+
+\begin_layout Standard
+First, we obtain the the number of neighbours that are to be considered.
+ We'll choose the 
+\family typewriter
+k
+\family default
+ which has the max accuracy.
+ We start by taking 
+\family typewriter
+k
+\family default
+ as 1 and then simulate the accuracy incrementing 
+\family typewriter
+k
+\family default
+ in each step.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+model_knn<-list();accuracy_knn<-numeric()
+\end_layout
+
+\begin_layout Plain Layout
+
+for(i in 1:20)
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	model_knn[[i]]<-knn(train[,-5],test[,-5],train$class,k=i,prob=T)
+\end_layout
+
+\begin_layout Plain Layout
+
+	accuracy_knn[i]<-sum(model_knn[[i]]==test$class)/length(test$class)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(1:20,accuracy_knn,type='b',main='Accuracy vs.
+ k',ylab='Accuracy',xlab='k',col='#33435c',pch=16)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+From the plot, we find that there are many values of 
+\family typewriter
+k
+\family default
+ which have maximum accuracy among all the values of 
+\family typewriter
+k
+\family default
+.
+\end_layout
+
+\begin_layout Standard
+We proceed to find the maximum accuracy.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+max(accuracy_knn)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Thus, we find that the max accuracy that was obtained by this method is
+ 
+\begin_inset Formula $96.67\%$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Further, we find the least vaue of 
+\family typewriter
+k
+\family default
+ with maximum accuracy.
+ This is due to the fact that a greater value of 
+\family typewriter
+k
+\family default
+ may lead to overfitting of the data.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+k<-min(which(accuracy_knn==max(accuracy_knn)))#min value of k which has
+ the max accuracy
+\end_layout
+
+\begin_layout Plain Layout
+
+k
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Thus, we find the value of 
+\family typewriter
+k
+\family default
+ as 
+\begin_inset Formula $10$
+\end_inset
+
+ with an accuracy level of 
+\begin_inset Formula $96.67\%$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section*
+Predictions
+\end_layout
+
+\begin_layout Standard
+We finally classify the iris dataset into the respective classes.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+final_model <- knn(train[,-5], test[,-5], train$class, k, prob=TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+model_tab <- table(test$class, final_model)
+\end_layout
+
+\begin_layout Plain Layout
+
+model_tab
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We find that, while 
+\family typewriter
+Iris-setosa
+\family default
+ was correctly classified, 
+\family typewriter
+Iris-versicolor
+\family default
+ and 
+\family typewriter
+Iris-virginica
+\family default
+ were not classified perfectly, as one of them was interchanged.
+\end_layout
+
+\begin_layout Standard
+The below dataframe gives the details of the test set along with the original
+ and predicted classes:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+cbind(test,final_model)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
